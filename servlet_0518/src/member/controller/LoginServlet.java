@@ -8,6 +8,7 @@ import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import javax.servlet.http.HttpSession;
 
 import member.model.service.MemberService;
 import member.model.vo.Member;
@@ -47,6 +48,11 @@ public class LoginServlet extends HttpServlet {
 		out.println("<body>");
 		if(m!=null)
 		{
+			// Session 객체를 가져옴(생성)
+			HttpSession session = request.getSession();
+			
+			session.setAttribute("user", m);
+//			System.out.println(session.getId());
 			out.println("<h1> 로그인에 성공 하셨습니다</h1>");
 			out.println(m.getMemberName() + " 님 환영합니다!");
 			out.println("<a href=myInfo>마이페이지 </a>");

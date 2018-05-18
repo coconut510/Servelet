@@ -17,8 +17,6 @@ public class MemberService {
 		try {
 			Class.forName("oracle.jdbc.driver.OracleDriver");
 			conn= DriverManager.getConnection("jdbc:oracle:thin:@localhost:1521:xe","login_member","login_member");
-			
-			System.out.println(conn.getMetaData());
 			conn.setAutoCommit(false);
 			
 		
