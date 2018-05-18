@@ -1,0 +1,22 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<title>체크 박스 테스트</title>
+</head>
+<body>
+	<h2>좋아하는 관광지를 선택하시오(다중가능)</h2>
+    <hr>
+    <form action="/servlet_0518/travelChk" method="get">
+        <input name="traver" type="checkbox" value="제주도"> 제주도
+        <input name="traver" type="checkbox" value="경복궁"> 경복궁
+        <input name="traver" type="checkbox" value="설악산"> 설악산 <br>
+        <input name="traver" type="checkbox" value="월미도"> 월미도
+        <input name="traver" type="checkbox" value="부산"> 부산
+        <input name="traver" type="checkbox" value="포항"> 포항<br>
+        <input name="traver" type="submit" value="전송">
+        <input name="traver" type="reset" value="취소">
+        힌트! checkbox 값은 name이 같이 때문에 .. 배열로 넘겨줌
+    </form>
+</body>
+</html>
