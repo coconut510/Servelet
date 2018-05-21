@@ -39,4 +39,61 @@ public class MemberService {
 		
 		return m;
 	}
+	
+	public boolean updateMember(Member m)
+	{
+		Connection conn = null;
+		boolean chk = false;
+		System.out.println(" 연결");
+		try {
+			Class.forName("oracle.jdbc.driver.OracleDriver");
+			conn= DriverManager.getConnection("jdbc:oracle:thin:@localhost:1521:xe","login_member","login_member");
+			conn.setAutoCommit(false);
+//			System.out.println(" 연결2 " + conn.getMetaData());
+		
+			chk = new MemberDao().updateMember(conn, m);
+//			System.out.println("결과 : " + chk);
+		} catch (ClassNotFoundException e) {
+			e.printStackTrace();
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}
+		finally
+		{
+			try {
+				conn.close();
+			} catch (SQLException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+		}
+		return chk;
+	}
+	public boolean idCheck(String id )
+	{
+		boolean chk = false;
+		Connection conn = null;
+		System.out.println(" 연결");
+		try {
+			Class.forName("oracle.jdbc.driver.OracleDriver");
+			conn= DriverManager.getConnection("jdbc:oracle:thin:@localhost:1521:xe","login_member","login_member");
+			conn.setAutoCommit(false);
+		
+			chk = new MemberDao().idCheck(conn, id);
+		} catch (ClassNotFoundException e) {
+			e.printStackTrace();
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}
+		finally
+		{
+			try {
+				conn.close();
+			} catch (SQLException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+		}
+		return chk;
+	}
 }

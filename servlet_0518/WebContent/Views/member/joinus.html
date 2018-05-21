@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<title>Insert title here</title>
+    <script>
+        function check(){
+           window.open("idCheck.html","_blank","width=500,height=200");
+        }
+        function back(){
+            history.go(-1);
+        }
+    </script>
+</head>
+<body>
+    <fieldset>
+        <legend>회원가입 </legend>
+        <form action="joinus.jsp" method="post">
+            ID : <input type="text" name="userId"><button type="button" onclick="check();">ID중복 검사 </button><br>
+            PW : <input type="password" name="userPwd"><br>
+            PW_RE : <input type="password" name="userPwd_re"><br>
+            NAME : <input type="text" name="userName"><br>
+            AGE : <input type="text" name="userAge"><br>
+            ADDR : <input type="text" name="userAddr"><br>
+            <input type="submit" value="회원가입 ">
+            <button type="button" onclick="back();"></button>
+         
+        </form>
+    </fieldset>
+</body>
+</html>
