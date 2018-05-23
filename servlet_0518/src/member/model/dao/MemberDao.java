@@ -1,7 +1,6 @@
 package member.model.dao;
 
 import java.sql.*;
-import java.sql.SQLException;
 
 import member.model.vo.Member;
 
@@ -94,7 +93,7 @@ public class MemberDao {
 			
 			if(rset.next())
 			{
-				result = true;
+				result = true;// 아이디가 있음.
 			}
 		} catch (SQLException e) {
 			// TODO Auto-generated catch block
@@ -105,6 +104,78 @@ public class MemberDao {
 			try {
 				rset.close();
 				stmt.close();
+			} catch (SQLException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+		}
+		return result;
+	}
+
+	public boolean idCheck(Connection conn, Member m) {
+		PreparedStatement pstmt = null;
+		ResultSet rset = null;
+		boolean result = false;
+		try {
+			String query = "INSERT INTO MEMBER VALUES(?,?,?,?,?)";
+			pstmt = conn.prepareStatement(query);
+			pstmt.setString(1, m.getMemberId());
+			pstmt.setString(2, m.getMemberPwd());
+			pstmt.setString(3, m.getMemberName());
+			pstmt.setInt(4, m.getMemberAge());
+			pstmt.setString(5, m.getMemberAddr());
+			rset = pstmt.executeQuery();
+			
+			if(rset.next())
+			{
+				result = true;// 아이디 생성 성공적으로.
+				conn.commit();				
+			}
+		} catch (SQLException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		finally
+		{
+			try {
+				rset.close();
+				pstmt.close();
+			} catch (SQLException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+		}
+		return result;
+	}
+
+	public boolean deleteUser(Connection conn, String id, String pass) {
+		PreparedStatement pstmt = null;
+		ResultSet rset = null;
+		boolean result = false;
+		try {
+			String query = "DELETE FROM MEMBER WHERE MEMBER_ID=? AND MEMBER_PWD = ?";
+			pstmt = conn.prepareStatement(query);
+			pstmt.setString(1, id);
+			pstmt.setString(2, pass);
+			rset = pstmt.executeQuery();
+			
+			if(rset.next())
+			{
+				result = true;// 아이디 삭제 성공적으로.
+				conn.commit();				
+			}
+			else {
+				conn.rollback();
+			}
+		} catch (SQLException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		finally
+		{
+			try {
+				rset.close();
+				pstmt.close();
 			} catch (SQLException e) {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
