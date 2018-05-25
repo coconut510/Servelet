@@ -32,6 +32,7 @@ public class MemberDao {
 				m.setGender(rset.getString("gender"));
 				m.setHobby(rset.getString("hobby"));
 				m.setEnrollDate(rset.getDate("enrolldate"));
+				m.setActivation(rset.getString("activation"));
 			}
 		} catch (SQLException e) {
 			// TODO Auto-generated catch block
@@ -91,6 +92,86 @@ public class MemberDao {
 			pstmt.setString(2, userId);
 			result = pstmt.executeUpdate();
 //			System.out.println("바뀐 결과 " + result);
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}
+		finally {
+			JDBCTemplate.close(pstmt);
+		}
+		return result;
+	}
+
+	public int joinMember(Connection conn, Member m) {
+		PreparedStatement pstmt = null;
+		int result = 0;
+		String query = "insert into member values (?,?,?,?,?,?,?,?,?,sysdate,?)";
+		
+		try {
+			pstmt = conn.prepareStatement(query);
+			pstmt.setString(1, m.getUserId());
+			pstmt.setString(2, m.getUserPwd());
+			pstmt.setString(3, m.getUserName());
+			pstmt.setInt(4, m.getAge());
+			pstmt.setString(5, m.getEmail());
+			pstmt.setString(6, m.getPhone());
+			pstmt.setString(7, m.getAddress());
+			pstmt.setString(8, m.getGender());
+			pstmt.setString(9, m.getHobby());
+//			pstmt.setString(10, "sysdate");
+			pstmt.setString(10, "Y");
+			result = pstmt.executeUpdate();
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}
+		finally {
+			JDBCTemplate.close(pstmt);
+		}
+		return result;
+	}
+
+	public boolean idCheck(Connection conn, String id) {
+		Statement stmt = null;
+		ResultSet rset = null;
+		boolean result = false;
+		try {
+			stmt = conn.createStatement();
+			
+			String query = "SELECT * FROM MEMBER WHERE userid = '" + id + "'";
+			
+			rset = stmt.executeQuery(query);
+			
+			if(rset.next())
+			{
+				result = true;// 아이디가 있음.
+			}
+		} catch (SQLException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		finally
+		{
+			JDBCTemplate.close(rset);
+			JDBCTemplate.close(stmt);
+		}
+		return result;
+	}
+
+	public int editMemberInfo(Connection conn, Member m) {
+		PreparedStatement pstmt = null;
+		int result = 0;
+		String query = "update member set userpwd=?, username=?,  email=?, phone=?,address=?, hobby=?"
+				+ "where userid=?";
+		
+		try {
+			pstmt = conn.prepareStatement(query);
+			pstmt.setString(1, m.getUserPwd());
+			pstmt.setString(2, m.getUserName());
+			pstmt.setString(3, m.getEmail());
+			pstmt.setString(4, m.getPhone());
+			pstmt.setString(5, m.getAddress());
+			pstmt.setString(6, m.getHobby());
+			pstmt.setString(7, m.getUserId());
+			result = pstmt.executeUpdate();
 		} catch (SQLException e) {
 			e.printStackTrace();
 		}

@@ -38,7 +38,7 @@
 <%}else{ %>
 	<h2>로그인 성공했습니다.</h2><br>
 	[<%= m.getUserName()%>]님 환영합니다.<br>
-	<a href="">마이페이지</a><br>
+	<a href="/views/member/myInfo.jsp">마이페이지</a><br>
 	<a href="logout">로그아웃</a><br>
 	<a href="">회원탈퇴</a><br>
 	

@@ -43,7 +43,6 @@ public class MemberActivationServlet extends HttpServlet {
 		{
 			response.sendRedirect("/views/member/activationError.jsp");
 		}
-		
 	}
 
 	/**

@@ -11,6 +11,7 @@
 	function check()
 	{
 		var ckeckId = document.getElementById("checkId").value;	
+		console.log("id " + checkId);
 		if(ckeckId==""){	
 			alert("아이디를 입력해주세요.");
 			return;

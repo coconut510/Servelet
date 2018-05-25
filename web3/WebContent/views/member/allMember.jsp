@@ -44,7 +44,7 @@
 	<script>
 		function back()
 		{
-			history.go(-1);
+			location.href="/index.jsp";
 		}
 	</script>
 	<button onclick="back();">뒤로가기 </button>

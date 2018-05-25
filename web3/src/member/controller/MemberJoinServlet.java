@@ -6,22 +6,21 @@ import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import javax.servlet.http.HttpSession;
 
 import member.model.service.MemberService;
 import member.model.vo.Member;
 
 /**
- * Servlet implementation class LoginServlet
+ * Servlet implementation class MemberJoinServlet
  */
-@WebServlet(name = "Login", urlPatterns = { "/login" })
-public class LoginServlet extends HttpServlet {
+@WebServlet(name = "MemberJoin", urlPatterns = { "/memberJoin" })
+public class MemberJoinServlet extends HttpServlet {
 	private static final long serialVersionUID = 1L;
        
     /**
      * @see HttpServlet#HttpServlet()
      */
-    public LoginServlet() {
+    public MemberJoinServlet() {
         super();
         // TODO Auto-generated constructor stub
     }
@@ -30,31 +29,38 @@ public class LoginServlet extends HttpServlet {
 	 * @see HttpServlet#doGet(HttpServletRequest request, HttpServletResponse response)
 	 */
 	protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-		// 1. 전송값에 한글이 있을경우를 처리할 수 있도록 인코딩 처리
-		// 2. View 에서 전송한 데이터를 받아 변수에 저장
-		// 3. 비즈니스 로직 처리(Controller-> Service-> Dao -> DB 처리후 리턴)
-		// 4. 처리 결과에 따라 성공/ 실패 페이지 리턴
 		request.setCharacterEncoding("utf-8");
-		String userId = request.getParameter("userId");
-		String userPwd = request.getParameter("userPwd");
+		String id = request.getParameter("userId");
+		String pwd = request.getParameter("userPwd");
+		String name = request.getParameter("userName");
+		int age = Integer.parseInt(request.getParameter("age"));
+		String email = request.getParameter("email");
+		String phone = request.getParameter("phone");
+		String addr = request.getParameter("addr");
+		String gender = request.getParameter("gender");
+		String hobby = request.getParameter("hobby");
 		
-		Member m = new MemberService().selectOne(userId, userPwd);
-		response.setContentType("text/html; charset=UTF-8");
-		if(m!=null )
+		
+		
+		Member m = new Member();
+		m.setUserId(id);
+		m.setUserPwd(pwd);
+		m.setUserName(name);
+		m.setAge(age);
+		m.setEmail(email);
+		m.setPhone(phone);
+		m.setAddress(addr);
+		m.setGender(gender);
+		m.setHobby(hobby);
+		
+		int result = new MemberService().joinMember(m);
+		if(result>0)
 		{
-			if(m.getActivation().equals("Y")) {
-				HttpSession session = request.getSession();
-				session.setAttribute("user", m);
-				response.sendRedirect("/views/member/loginSuccess.jsp");
-			}
-			else
-			{
-				response.sendRedirect("/views/member/loginVan.jsp");
-			}
+			response.sendRedirect("/views/member/joinSuccess.jsp");
 		}
 		else
 		{
-			response.sendRedirect("/views/member/loginFail.jsp");
+			response.sendRedirect("/views/member/joinFail.jsp");
 		}
 		
 	}

@@ -31,4 +31,28 @@ public class MemberService {
 		JDBCTemplate.close(conn);
 		return result;
 	}
+	public int joinMember(Member m) {
+		Connection conn = JDBCTemplate.conn();
+		int result = mdao.joinMember(conn, m);
+		if(result>0) JDBCTemplate.commit(conn);
+		else JDBCTemplate.rollback(conn);
+		JDBCTemplate.close(conn);
+		return result;
+	}
+	public boolean idCheck(String id )
+	{
+		boolean chk = false;
+		Connection conn = JDBCTemplate.conn();;
+		chk = new MemberDao().idCheck(conn, id);
+		JDBCTemplate.close(conn);
+		return chk;
+	}
+	public int editMemberInfo(Member m) {
+		Connection conn = JDBCTemplate.conn();
+		int result = mdao.editMemberInfo(conn, m);
+		if(result>0) JDBCTemplate.commit(conn);
+		else JDBCTemplate.rollback(conn);
+		JDBCTemplate.close(conn);
+		return result;
+	}
 }
