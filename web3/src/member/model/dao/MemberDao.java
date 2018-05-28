@@ -104,7 +104,7 @@ public class MemberDao {
 	public int joinMember(Connection conn, Member m) {
 		PreparedStatement pstmt = null;
 		int result = 0;
-		String query = "insert into member values (?,?,?,?,?,?,?,?,?,sysdate,?)";
+		String query = "insert into member values (?,?,?,?,?,?,?,?,?,sysdate,?,sysdate)";
 		
 		try {
 			pstmt = conn.prepareStatement(query);
@@ -159,9 +159,8 @@ public class MemberDao {
 	public int editMemberInfo(Connection conn, Member m) {
 		PreparedStatement pstmt = null;
 		int result = 0;
-		String query = "update member set userpwd=?, username=?,  email=?, phone=?,address=?, hobby=?"
+		String query = "update member set userpwd=?, username=?,  email=?, phone=?,address=?, hobby=?, last_modified=sysdate "
 				+ "where userid=?";
-		
 		try {
 			pstmt = conn.prepareStatement(query);
 			pstmt.setString(1, m.getUserPwd());
@@ -176,6 +175,52 @@ public class MemberDao {
 			e.printStackTrace();
 		}
 		finally {
+			JDBCTemplate.close(pstmt);
+		}
+		return result;
+	}
+
+	public int deleteMember(Connection conn, String userId, String pass) {
+		PreparedStatement pstmt = null;
+		int result = 0;
+		String query = "delete from member where userid=? and userpwd=?";
+		
+		try {
+			pstmt = conn.prepareStatement(query);
+			pstmt.setString(1, userId);
+			pstmt.setString(2, pass);
+			result = pstmt.executeUpdate();
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}
+		finally {
+			JDBCTemplate.close(pstmt);
+		}
+		return result;
+	}
+
+	public boolean changePwdCheck(Connection conn, String userId) {
+		PreparedStatement pstmt = null;
+		ResultSet rset = null;
+		boolean result = false;
+		String query = "select floor(sysdate-last_modified) as change_date from member where userid=?";
+		try {
+			pstmt = conn.prepareStatement(query);
+			pstmt.setString(1, userId);
+			rset =  pstmt.executeQuery();
+			if(rset.next())
+			{
+				if(rset.getInt("change_date")>=90)
+				{
+					result = true;
+				}
+			
+			}
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}
+		finally {
+			JDBCTemplate.close(rset);
 			JDBCTemplate.close(pstmt);
 		}
 		return result;

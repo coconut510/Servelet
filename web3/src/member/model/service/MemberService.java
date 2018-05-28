@@ -55,4 +55,20 @@ public class MemberService {
 		JDBCTemplate.close(conn);
 		return result;
 	}
+	public int deleteMember(String userId, String pass) {
+		Connection conn = JDBCTemplate.conn();
+		int result = mdao.deleteMember(conn, userId, pass);
+		if(result>0) JDBCTemplate.commit(conn);
+		else JDBCTemplate.rollback(conn);
+		JDBCTemplate.close(conn);
+		return result;
+	}
+	public boolean changePwdCheck(String userId) {
+		Connection conn = JDBCTemplate.conn();
+		boolean result = mdao.changePwdCheck(conn, userId);
+		if(result) JDBCTemplate.commit(conn);
+		else JDBCTemplate.rollback(conn);
+		JDBCTemplate.close(conn);
+		return result;
+	}
 }

@@ -6,7 +6,6 @@
   <%
   	Member m = (Member)session.getAttribute("user");
   	
-  	
   %>
 <!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
 <html>
@@ -19,6 +18,15 @@
         formT.action="logout";
         formT.submit();
 	}
+    function signOut()
+    {
+        var chk = window.confirm("정말로 탈퇴하시겠습니까?");
+        if(chk){
+            var deleteForm = document.getElementById("delete");
+            deleteForm.style.display ="inline";
+            console.log("버튼클릭");
+        }
+    }
 </script>
 </head>
 <body>
@@ -40,13 +48,24 @@
 	[<%= m.getUserName()%>]님 환영합니다.<br>
 	<a href="/views/member/myInfo.jsp">마이페이지</a><br>
 	<a href="logout">로그아웃</a><br>
-	<a href="">회원탈퇴</a><br>
+	<label onclick="signOut();" id="deleteBtn">회원탈퇴</label>
+		<form action="deleteMember" method="post" style="display:none;" id="delete">
+		<label style="color:red;">비밀번호 입력 :</label> 	
+		<input type="password" name="userPwd"/>
+			<input type="submit" value="확인"/>
+		</form>
+ 
+	<br>
+	<a href="/notice">공지사항</a><br>
+	
 	
 <%
 	if(m.getUserId().equals("admin"))
 	{%>
 		<a href="/allMember">전체회원조회</a><br>
 	<%}
+	
 } %>
+
 </body>
 </html>

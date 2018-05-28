@@ -43,9 +43,18 @@ public class LoginServlet extends HttpServlet {
 		if(m!=null )
 		{
 			if(m.getActivation().equals("Y")) {
+				
+				boolean result = new MemberService().changePwdCheck(userId);
 				HttpSession session = request.getSession();
 				session.setAttribute("user", m);
-				response.sendRedirect("/views/member/loginSuccess.jsp");
+				if(!result)  // 비밀번호 변경한지 90일이 안됐을때.
+				{		
+					response.sendRedirect("/views/member/loginSuccess.jsp");
+				}
+				else // 비밀번호 변경한지 90일 넘었을때.
+				{
+					response.sendRedirect("/views/member/passChange.jsp");
+				}
 			}
 			else
 			{

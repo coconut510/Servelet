@@ -13,10 +13,11 @@
   	window.onload=function(){
 	 <%
 	 	Member m_session = (Member)session.getAttribute("user");
-	 
+	 	System.out.println("정보 " +  m_session.getUserName() );
+	 	
 	 	String userId = m_session.getUserId();
-		 String userPwd = m_session.getUserPwd();	
-		 Member m = new MemberService().selectOne(userId, userPwd);
+		String userPwd = m_session.getUserPwd();	
+		Member m = new MemberService().selectOne(userId, userPwd);
 		 
 		 if(m.getGender().equals("M")){%>  
 			document.getElementById("M").checked="checked";
@@ -41,7 +42,7 @@
 	<form action="/editMyInfo" method="post">
             ID : <input type="text" value="<%=m.getUserId() %>" readonly name="userId" id="userId"/><br>
             PW : <input type="password" value="<%= m.getUserPwd()%>" name="userPwd"/><br>
-            PW(re): <input type="password" value="<%=m.getUserPwd() %>" name="userPwdRe"/><br>
+            PW(re): <input type="password" value="<%=m.getUserPwd() %>" name="userPwd_re"/><br>
             Name : <input type="text" value="<%=m.getUserName()%>" name="userName"><br>
             Age : <input type="text" value="<%=m.getAge() %>" readonly name="age"><br>
             Email : <input type="email" value="<%=m.getEmail() %>" name="email"><br>
