@@ -1,0 +1,71 @@
+<%@ page language="java" contentType="text/html; charset=UTF-8"
+    pageEncoding="UTF-8"
+    import="notice.model.vo.*"
+    import="member.model.vo.*"
+    %>
+    
+ <%
+ 	Notice n = (Notice)request.getAttribute("notice");
+ 	Member m = (Member)session.getAttribute("user");
+ 	
+ %>
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+<title>공지 사항 내용</title>
+	
+	<script>
+		window.onload = function(){
+		}	
+		function back()
+		{
+			location.href="/notice";
+		}
+		function delConfirm()
+		{
+			var passChk = window.prompt("비밀번호를 한번더 입력해주세요.");
+            var originPass = 	<%=m.getUserPwd()%>;
+            if(passChk==originPass)
+           	{
+            	var confirm = window.confirm("정말 삭제하시겠습니까?");
+            	if(confirm)
+           		{
+           			location.href="/noticeDelete?noticeNo="+<%=n.getNoticeNo() %>; 
+           		}
+            	else
+           		{
+           			history.go(-1);
+           		}
+           	}
+            else
+           	{
+           		alert("비밀번호가 틀렸습니다.");
+           	}
+		}
+	</script>
+</head>
+<body>
+글번호 : <%=n.getNoticeNo() %><br>
+글쓴이 : <%=n.getUserId() %><br>
+작성일 : <%=n.getRegDate() %><br>
+글제목 : <%=n.getSubject() %><br>
+<textarea rows="20" cols="100" readonly style="resize:none"><%=n.getContents() %></textarea>
+<br>
+<button type="button" onclick="back()">목록</button>
+
+<% if(m.getUserId().equals("admin")){ %>
+<form action="noticeUpdateReady" style="display:inline;">
+	<input type="hidden" name="noticeNo" value="<%=n.getNoticeNo()%>"/>
+	<input type="submit" value="수정">
+</form>
+<form action="/views/notice/noticeDel.jsp?noticeNo=<%=n.getNoticeNo() %>" style="display:inline;">
+	<input type="hidden" name="noticeNo" value="<%=n.getNoticeNo()%>"/>
+	<button type="button" onclick="delConfirm();">삭제 </button>
+</form>
+<form action="/views/notice//noticeWrite.jsp" style="display:inline;">
+	<input type="submit" value="글쓰기">
+</form>
+<%} %>
+</body>
+</html>

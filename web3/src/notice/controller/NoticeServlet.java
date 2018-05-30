@@ -38,6 +38,10 @@ public class NoticeServlet extends HttpServlet {
 		// 2. view 에서 넘겨준 값이 있을경우 받아서 변수에 저장
 		String search = request.getParameter("search");
 		if(search==null) search = "";
+		String searchType = request.getParameter("searchType");
+		if(searchType==null) searchType="subject";
+		System.out.println("검색 타입" + searchType);
+//		if(searchType==null) searchType = "";
 		// 3. 비즈니스 로직
 
 		int currentPage;// 현재 페이지 값을 저장하는 변수
@@ -45,12 +49,13 @@ public class NoticeServlet extends HttpServlet {
 		if(request.getParameter("currentPage")==null) currentPage = 1;
 		else currentPage = Integer.parseInt(request.getParameter("currentPage"));
 		
-		PageData pd = new NoticeService().noticeAll(currentPage,search);
+		PageData pd = new NoticeService().noticeAll(currentPage,search,searchType);
 		
 		if(pd!=null)
 		{
 			RequestDispatcher view = request.getRequestDispatcher("/views/notice/notice.jsp");
 			request.setAttribute("pageData", pd);
+			request.setAttribute("search", search);
 			view.forward(request, response);
 		}
 		else

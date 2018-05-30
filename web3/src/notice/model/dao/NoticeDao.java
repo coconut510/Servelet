@@ -12,40 +12,23 @@ import member.model.vo.Member;
 import notice.model.vo.Notice;
 
 public class NoticeDao {
-	private static String search = "";
-	public ArrayList<Notice> getCurrnetPage(Connection conn, int currentPage, int recordCountPerPage, String search) {
+	public ArrayList<Notice> getCurrnetPage(Connection conn, int currentPage, int recordCountPerPage, String search, String searchType) {
 		PreparedStatement pstmt = null;
 		ResultSet rset = null;
-		this.search = search;
+//		this.search = search;
 		// 시작페이지 계산
 		int start = currentPage * recordCountPerPage - (recordCountPerPage-1);
 		// 끝 페이지 계산
 		int end = currentPage * recordCountPerPage;
-		String query = "";
-		if(this.search.equals("")) {
-//			// 시작페이지 계산
-//			start = currentPage * recordCountPerPage - (recordCountPerPage-1);
-//			// 끝 페이지 계산
-//			end = currentPage * recordCountPerPage;
-			query = "select * from ("+
-							"select notice.* , row_number() over(order by noticeno desc) as num from notice) "+
-									"where num between ? and ?";
-		}
-		else
-		{
-//			start = 0;
-//			end = 0;
-			query = "select * from ("+
-					"select notice.* , row_number() over(order by noticeno desc) as num from notice where subject like '%"+search+"%' ) "+
+		String 	query = "select * from ("+
+					"select notice.* , row_number() over(order by noticeno desc) as num from notice where "+ searchType+" like '%"+search+"%' ) "+
 							"where num between ? and ?";
-		}
+			System.out.println(query);
 		ArrayList<Notice> list = new ArrayList<Notice>();
 		try {
 			pstmt = conn.prepareStatement(query);
-//			if(search.equals("")) {
-				pstmt.setInt(1, start);
-				pstmt.setInt(2, end);
-//			}
+			pstmt.setInt(1, start);
+			pstmt.setInt(2, end);
 			rset = pstmt.executeQuery();
 			
 			while(rset.next()) 
@@ -68,13 +51,13 @@ public class NoticeDao {
 		
 		return list;
 	}
-	public String getPageNavi(Connection conn, int currentPage, int recordCountPerPage, int naviCountPerPage, String search) {
+	public String getPageNavi(Connection conn, int currentPage, int recordCountPerPage, int naviCountPerPage, String search, String searchType) {
 		// 게시물의 토탈 개수를 구해야함
 		int recordTotalCount = 0;
 		// 총 게시물 개수 저장 변수(정보가 없으므로 초기값은  0)
 		String query = "select count(*) as total from notice"+
-				 " where subject like '%"+this.search+"%'";
-		this.search = search;
+				 " where "+searchType +" like '%"+search+"%'";
+//		this.search = search;
 		PreparedStatement pstmt = null;
 		ResultSet rset = null;
 		try {
@@ -84,7 +67,7 @@ public class NoticeDao {
 			if(rset.next())
 			{
 				recordTotalCount = rset.getInt("total");
-				System.out.println("찾은 전체 게시물 " + recordTotalCount);
+//				System.out.println("찾은 전체 게시물 " + recordTotalCount);
 			}
 		} catch (SQLException e) {
 			e.printStackTrace();
@@ -107,7 +90,7 @@ public class NoticeDao {
 		{
 			pageTotalCount = recordTotalCount/recordCountPerPage;
 		}		
-		System.out.println("전체 페이지 " + pageTotalCount);
+//		System.out.println("전체 페이지 " + pageTotalCount);
 		// 사용자가 현재 페이지가 1 페이지 인데 더 아래 페이지를 요청할 경우
 		// 혹은 마지막 페이지가 120 페이지 인데 다음 페이지를
 		// 요청할 경우에 대한 에러 방지 설정
@@ -164,24 +147,117 @@ public class NoticeDao {
 		StringBuilder sb = new StringBuilder();
 		
 		if(needPrev) {// 시작이 1페이지가 아니라면!
-			sb.append("<a href='/notice?currentPage="+(startNavi-1)+ "&search="+this.search+"'> < </a>");
+			sb.append("<a href='/notice?currentPage="+(startNavi-1)+ "&search="+search+"&searchType="+ searchType+"'> < </a>");
 		}
 		
 		for(int i = startNavi;i<=endNavi;i++)
 		{
 			if(i==currentPage) {
-				sb.append("<a href='/notice?currentPage="+i+"&search="+this.search+"'><B> "+i+" </B></a>");
+				sb.append("<a href='/notice?currentPage="+i+"&search="+search+"&searchType="+ searchType+"'><B> "+i+" </B></a>");
 			}
 			else {
-				sb.append("<a href='/notice?currentPage="+i+"&search="+this.search+"'> "+i+" </a>");
+				sb.append("<a href='/notice?currentPage="+i+"&search="+search+"&searchType="+ searchType+"'> "+i+" </a>");
 			}
 		}
 		
 		if(needNext) {// 끝페이지가 아니라면
-			sb.append("<a href='/notice?currentPage="+(endNavi+1)+ "&search="+this.search+"'> > </a>");
+			sb.append("<a href='/notice?currentPage="+(endNavi+1)+ "&search="+search+"&searchType="+ searchType+"'> > </a>");
+		
 		}
 		System.out.println("검색어 " + search);
 		return sb.toString();
+	}
+	public Notice noticeSelect(Connection conn, int noticeNo) {
+		
+		PreparedStatement pstmt = null;
+		ResultSet rset = null;
+		String query = "select * from notice where noticeno=?";
+		Notice n = null;
+		try {
+			pstmt = conn.prepareStatement(query);
+			pstmt.setInt(1, noticeNo);
+			rset = pstmt.executeQuery();
+			
+			if(rset.next())
+			{
+				n = new Notice();
+				n.setNoticeNo(rset.getInt("noticeno"));
+				n.setSubject(rset.getString("subject"));
+				n.setContents(rset.getString("contents"));
+				n.setUserId(rset.getString("userid"));
+				n.setRegDate(rset.getDate("regdate"));
+			}
+		} catch (SQLException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		finally {
+			JDBCTemplate.close(rset);
+			JDBCTemplate.close(pstmt);
+		}
+		return n;	
+	}
+	public int noticeUpdate(Connection conn, int noticeNo, String subject, String contents) {
+		PreparedStatement pstmt = null;
+		int result = 0;
+		
+		String query = "update notice set subject=?, contents=? where noticeno=?";
+		Notice n = null;
+		try {
+			pstmt = conn.prepareStatement(query);
+			pstmt.setString(1, subject);
+			pstmt.setString(2, contents);
+			pstmt.setInt(3, noticeNo);
+			result = pstmt.executeUpdate();
+			
+		} catch (SQLException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		finally {
+			JDBCTemplate.close(pstmt);
+		}
+		return result;
+	}
+	public int noticeWrite(Connection conn, Notice n) {
+		PreparedStatement pstmt = null;
+		int result = 0;
+		
+		String query = "insert into notice values (SEQ_NOTICE.NEXTVAL,?,?,?,sysdate)";
+		try {
+			pstmt = conn.prepareStatement(query);
+			pstmt.setString(1, n.getSubject());
+			pstmt.setString(2, n.getContents());
+			pstmt.setString(3, n.getUserId());
+			result = pstmt.executeUpdate();
+			
+		} catch (SQLException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		finally {
+			JDBCTemplate.close(pstmt);
+		}
+		return result;
+	}
+	public int noticeDelete(Connection conn, int noticeNo) {
+		PreparedStatement pstmt = null;
+		int result = 0;
+		
+		String query = "delete from notice where noticeno=?";
+		try {
+			pstmt = conn.prepareStatement(query);
+			pstmt.setInt(1, noticeNo);
+			result = pstmt.executeUpdate();
+			
+		} catch (SQLException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		finally {
+			JDBCTemplate.close(pstmt);
+		}
+		return result;
 	}
 
 
