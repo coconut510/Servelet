@@ -36,12 +36,17 @@ public class NoticeServlet extends HttpServlet {
 		// 1. 한글이 있을경우 인코딩
 		request.setCharacterEncoding("utf-8");
 		// 2. view 에서 넘겨준 값이 있을경우 받아서 변수에 저장
-		String search = request.getParameter("search");
-		if(search==null) search = "";
-		String searchType = request.getParameter("searchType");
-		if(searchType==null) searchType="subject";
-		System.out.println("검색 타입" + searchType);
-//		if(searchType==null) searchType = "";
+		String search="";
+		if( request.getParameter("search")!=null) 
+		{
+			search = request.getParameter("search");		
+			if(search==null) search = "";
+		}
+		String searchType="subject";
+		if(request.getParameter("searchType")!=null) {
+			searchType = request.getParameter("searchType");
+			if(searchType==null) searchType="subject";
+		}
 		// 3. 비즈니스 로직
 
 		int currentPage;// 현재 페이지 값을 저장하는 변수

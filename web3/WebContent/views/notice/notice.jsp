@@ -8,6 +8,11 @@
    		PageData pd = (PageData)request.getAttribute("pageData");
    		ArrayList<Notice> noticeList = pd.getNoticeList();// 현재 페이지 리스트
    		String pageNavi = pd.getPageNavi();  // 네비 리스트.
+   		String id ="";
+   		if(session.getAttribute("user")!=null)
+   		{
+   			id= ((Member)session.getAttribute("user")).getUserId();
+   		}
    %>
 <!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
 <html>
@@ -37,7 +42,7 @@
 			<input type="text" name="search" value="<%=request.getAttribute("search")%>"/>
 			<input type="submit" value="검색"/>
 		</form>
-		<%if( ((Member)session.getAttribute("user")).getUserId().equals("admin")){ %>
+		<%if(id.equals("admin")){ %>
 		<form action="/views/notice/noticeWrite.jsp" style="display:inline;">
 			<input type="submit" value="글쓰기">
 		</form>

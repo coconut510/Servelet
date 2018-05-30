@@ -57,8 +57,7 @@
  
 	<br>
 	<a href="/notice">공지사항</a><br>
-	
-	
+	<a href="/views/file/upload.html">업로드</a>
 <%
 	if(m.getUserId().equals("admin"))
 	{%>
@@ -66,6 +65,7 @@
 	<%}
 	
 } %>
+	
 
 </body>
 </html>

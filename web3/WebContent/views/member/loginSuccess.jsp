@@ -11,6 +11,15 @@
 <head>
 <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
 <title>Insert title here</title>
+	<script>
+		window.onload = function(){
+			if(opener!=null)// 자신이 팝업창 일때.
+			{
+				opener.location.reload();
+				window.close();
+			}
+		}
+	</script>
 </head>
 <body>
 	<h2>로그인 성공했습니다.</h2><br>
