@@ -16,21 +16,23 @@ import javax.servlet.http.HttpSession;
 import com.oreilly.servlet.MultipartRequest;
 import com.oreilly.servlet.multipart.DefaultFileRenamePolicy;
 
+import common.MyFileRenamePolicy;
 import file.model.service.FileService;
 import file.model.vo.DataFile;
+import file.model.vo.DataFile2;
 import member.model.vo.Member;
 
 /**
- * Servlet implementation class UploadServlet
+ * Servlet implementation class Upload2Servlet
  */
-@WebServlet(name = "Upload", urlPatterns = { "/upload" })
-public class UploadServlet extends HttpServlet {
+@WebServlet(name = "Upload2", urlPatterns = { "/upload2" })
+public class Upload2Servlet extends HttpServlet {
 	private static final long serialVersionUID = 1L;
        
     /**
      * @see HttpServlet#HttpServlet()
      */
-    public UploadServlet() {
+    public Upload2Servlet() {
         super();
         // TODO Auto-generated constructor stub
     }
@@ -60,27 +62,17 @@ public class UploadServlet extends HttpServlet {
 														uploadFilePath,
 														fileSizeLimit,
 														encType, 
-														new DefaultFileRenamePolicy() );
-		// 마지막 인자값ㅇ딘 DefaultFileRenamePolicy 객체를 생성하여
-		// 넣어 줌으로써 파일 중복 처리를 자동으로 해결함
-		// ex) a.bmp가 중복으로 업로드 되면 a1.bmp, a2.bmp, a3.bmp...
-		// MultipartRequest 객체가 생성되면 자동으로 파일은 해당 경로로
-		// 업로드 됨		
+														new MyFileRenamePolicy() );
 		
+		// 파일 이름이 2가지가 저장 되어야 함
+		// beforeFileName, afterFileName
+
 		// 업로드된 파일의 정보를 DB에 기록하여야 함
+		String beforeFileName = multi.getOriginalFileName("upfile");// 원본 파일이름
+		String afterFileName = multi.getFilesystemName("upfile");// 바뀐 파일 이름
+
 		
-		// 1. 파일 이름(filename)
-		// getFileSystemName("view의 파라미터 이름"); 을 하게 되면
-		// 해당 업로드 될때의 파일 이름을 가져옴
-		String fileName = multi.getFilesystemName("upfile");
-		
-		
-		// 2. 업로드 파일의 실제 총 경로(filePath)
-		// 총경로 : filePath + 파일이름
-		// ex) 업로드한 파일이 a.txt 라면?
-		// 총경로 : C:\\workspace\\Servlet\\web3\\WebContent\\uploadfile\a.txt
-		
-		String fullFilePath = uploadFilePath + "\\" + fileName;
+		String fullFilePath = uploadFilePath + "\\" + afterFileName;
 		
 		// 3. 파일의 길이 - 크기 (length)
 		File file = new File(fullFilePath);// 해당 파일을 오픈
@@ -98,9 +90,9 @@ public class UploadServlet extends HttpServlet {
 		//Timestamp 패키지는 java.sql.Timestamp로 가져와야 함
 		
 		//객체에 값 저장
-		DataFile df = new DataFile(fileName, fullFilePath,fileSize,userId, uploadTime);
+		DataFile2 df = new DataFile2(beforeFileName,afterFileName, fullFilePath,fileSize,userId, uploadTime);
 		
-		int result = new FileService().uploadFile(df);		
+		int result = new FileService().uploadFile2(df);		
 		if(result>0)
 		{
 			response.sendRedirect("/views/file/fileUpLoadSuccess.jsp");
