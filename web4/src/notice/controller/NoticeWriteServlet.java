@@ -1,28 +1,28 @@
-package member.controller;
+package notice.controller;
 
 import java.io.IOException;
-import java.util.ArrayList;
-
-import javax.servlet.RequestDispatcher;
 import javax.servlet.ServletException;
 import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import javax.servlet.http.HttpSession;
 
 import member.model.vo.Member;
+import notice.model.service.NoticeService;
+import notice.model.vo.Notice;
 
 /**
- * Servlet implementation class EL_Test4Servlet
+ * Servlet implementation class NoticeWriteServlet
  */
-@WebServlet(name = "EL_Test4", urlPatterns = { "/eL_Test4" })
-public class EL_Test4Servlet extends HttpServlet {
+@WebServlet(name = "NoticeWrite", urlPatterns = { "/noticeWrite" })
+public class NoticeWriteServlet extends HttpServlet {
 	private static final long serialVersionUID = 1L;
        
     /**
      * @see HttpServlet#HttpServlet()
      */
-    public EL_Test4Servlet() {
+    public NoticeWriteServlet() {
         super();
         // TODO Auto-generated constructor stub
     }
@@ -31,15 +31,27 @@ public class EL_Test4Servlet extends HttpServlet {
 	 * @see HttpServlet#doGet(HttpServletRequest request, HttpServletResponse response)
 	 */
 	protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-		ArrayList<Member> list = new ArrayList<Member>();
-		list.add(new Member("홍길동", 20, "경기도"));
-		list.add(new Member("김말똥", 30, "서울시"));
-		list.add(new Member("고길동", 40, "인천시"));
+		request.setCharacterEncoding("utf-8");
+		HttpSession session = request.getSession();
+		String userId = ((Member)session.getAttribute("user")).getUserId();
+		String subject = request.getParameter("subject");
+		String contents = request.getParameter("contents");
 		
-//		RequestDispatcher view = request.getRequestDispatcher("/views/el/el_test4.jsp");
-		RequestDispatcher view = request.getRequestDispatcher("/views/jstl/jstl_basic1.jsp");
-		request.setAttribute("members", list);
-		view.forward(request, response);
+		Notice n = new Notice();
+		n.setUserId(userId);
+		n.setSubject(subject);
+		n.setContents(contents);
+		
+		int result = new NoticeService().noticeWrite(n);
+		
+		if(result>0)// 글 등록 성공.
+		{
+			response.sendRedirect("/notice");
+		}
+		else // 글 등록 실패.
+		{
+			response.sendRedirect("/views/notice/noticeError.html");
+		}
 	}
 
 	/**

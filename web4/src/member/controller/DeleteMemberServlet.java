@@ -1,28 +1,27 @@
 package member.controller;
 
 import java.io.IOException;
-import java.util.ArrayList;
 
-import javax.servlet.RequestDispatcher;
 import javax.servlet.ServletException;
 import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import javax.servlet.http.HttpSession;
 
 import member.model.vo.Member;
-
+import member.model.service.*;
 /**
- * Servlet implementation class EL_Test4Servlet
+ * Servlet implementation class DeleteMemberServlet
  */
-@WebServlet(name = "EL_Test4", urlPatterns = { "/eL_Test4" })
-public class EL_Test4Servlet extends HttpServlet {
+@WebServlet(name = "DeleteMember", urlPatterns = { "/deleteMember" })
+public class DeleteMemberServlet extends HttpServlet {
 	private static final long serialVersionUID = 1L;
        
     /**
      * @see HttpServlet#HttpServlet()
      */
-    public EL_Test4Servlet() {
+    public DeleteMemberServlet() {
         super();
         // TODO Auto-generated constructor stub
     }
@@ -31,15 +30,28 @@ public class EL_Test4Servlet extends HttpServlet {
 	 * @see HttpServlet#doGet(HttpServletRequest request, HttpServletResponse response)
 	 */
 	protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-		ArrayList<Member> list = new ArrayList<Member>();
-		list.add(new Member("홍길동", 20, "경기도"));
-		list.add(new Member("김말똥", 30, "서울시"));
-		list.add(new Member("고길동", 40, "인천시"));
-		
-//		RequestDispatcher view = request.getRequestDispatcher("/views/el/el_test4.jsp");
-		RequestDispatcher view = request.getRequestDispatcher("/views/jstl/jstl_basic1.jsp");
-		request.setAttribute("members", list);
-		view.forward(request, response);
+		HttpSession session = request.getSession();
+		response.setContentType("text/html; charset=UTF-8");
+		String pass = request.getParameter("userPwd");
+		Member m = (Member)session.getAttribute("user");
+		if(m.getUserPwd().equals(pass))
+		{
+			int result = new MemberService().deleteMember(m.getUserId(), pass);
+			System.out.println("회원 탈퇴 결과" + result);
+			if(result>0) {
+				response.sendRedirect("/views/member/signOut.jsp");
+				session.removeAttribute("user");
+			}
+			else
+			{
+				response.sendRedirect("/views/member/Error.html");
+			}
+		}
+		else
+		{
+			session.setAttribute("passwordError", "true");
+			response.sendRedirect("/index.jsp");
+		}
 	}
 
 	/**

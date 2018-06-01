@@ -1,4 +1,4 @@
-package member.controller;
+package file.controller;
 
 import java.io.IOException;
 import java.util.ArrayList;
@@ -9,20 +9,22 @@ import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import javax.servlet.http.HttpSession;
 
-import member.model.vo.Member;
+import file.model.service.FileService;
+import file.model.vo.DataFile;
 
 /**
- * Servlet implementation class EL_Test4Servlet
+ * Servlet implementation class FileListServlet
  */
-@WebServlet(name = "EL_Test4", urlPatterns = { "/eL_Test4" })
-public class EL_Test4Servlet extends HttpServlet {
+@WebServlet(name = "FileList", urlPatterns = { "/fileList" })
+public class FileListServlet extends HttpServlet {
 	private static final long serialVersionUID = 1L;
        
     /**
      * @see HttpServlet#HttpServlet()
      */
-    public EL_Test4Servlet() {
+    public FileListServlet() {
         super();
         // TODO Auto-generated constructor stub
     }
@@ -31,15 +33,14 @@ public class EL_Test4Servlet extends HttpServlet {
 	 * @see HttpServlet#doGet(HttpServletRequest request, HttpServletResponse response)
 	 */
 	protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-		ArrayList<Member> list = new ArrayList<Member>();
-		list.add(new Member("홍길동", 20, "경기도"));
-		list.add(new Member("김말똥", 30, "서울시"));
-		list.add(new Member("고길동", 40, "인천시"));
-		
-//		RequestDispatcher view = request.getRequestDispatcher("/views/el/el_test4.jsp");
-		RequestDispatcher view = request.getRequestDispatcher("/views/jstl/jstl_basic1.jsp");
-		request.setAttribute("members", list);
-		view.forward(request, response);
+		ArrayList<DataFile> list = new FileService().selsetAll();
+		System.out.println("배열 길이 " + list.size());
+		if(!list.isEmpty())
+		{
+			RequestDispatcher view = request.getRequestDispatcher("/views/file/fileList.jsp");
+			request.setAttribute("fileList", list);
+			view.forward(request, response);
+		}
 	}
 
 	/**

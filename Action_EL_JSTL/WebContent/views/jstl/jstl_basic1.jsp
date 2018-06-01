@@ -55,5 +55,17 @@
 	<c:forEach begin="1" end="10" var="i">
 		${i}<br>
 	</c:forEach>
+	
+	
+	<c:forEach begin="0" items="${list}" var="m" varStatus="i">
+		${i.count }번째 학생
+		이름 : ${m.name}
+		나이 : ${m.age}
+		주소 : ${m.addr}
+		<br>
+	</c:forEach>
+
+
+	
 </body>
 </html>
