@@ -23,7 +23,7 @@
 </head>
 <body>
 	<h2>로그인 성공했습니다.</h2><br>
-	[<%= userId%>]님 환영합니다.<br>
+	${member.userId}님 환영합니다.<br>
 	<a href="/index.jsp">메인페이지로 돌아가기</a>
 </body>
 </html>

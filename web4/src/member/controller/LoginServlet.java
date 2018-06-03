@@ -1,6 +1,8 @@
 package member.controller;
 
 import java.io.IOException;
+
+import javax.servlet.RequestDispatcher;
 import javax.servlet.ServletException;
 import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
@@ -49,7 +51,10 @@ public class LoginServlet extends HttpServlet {
 				session.setAttribute("user", m);
 				if(!result)  // 비밀번호 변경한지 90일이 안됐을때.
 				{		
-					response.sendRedirect("/views/member/loginSuccess.jsp");
+					
+					RequestDispatcher view = request.getRequestDispatcher("/views/member/loginSuccess.jsp");
+					request.setAttribute("member", m);
+					view.forward(request, response);
 				}
 				else // 비밀번호 변경한지 90일 넘었을때.
 				{

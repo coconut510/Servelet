@@ -3,7 +3,7 @@
     import="member.model.vo.*"
     import="member.model.service.*"
     %>
-
+<%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>  
 <!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
 <html>
 <head>
@@ -38,19 +38,20 @@
   </script>
 </head>
 <body>
+<c:set var="member" value="<%=m %>"/>
 	<center>
 	<form action="/editMyInfo" method="post">
-            ID : <input type="text" value="<%=m.getUserId() %>" readonly name="userId" id="userId"/><br>
-            PW : <input type="password" value="<%= m.getUserPwd()%>" name="userPwd"/><br>
-            PW(re): <input type="password" value="<%=m.getUserPwd() %>" name="userPwd_re"/><br>
-            Name : <input type="text" value="<%=m.getUserName()%>" name="userName"><br>
-            Age : <input type="text" value="<%=m.getAge() %>" readonly name="age"><br>
-            Email : <input type="email" value="<%=m.getEmail() %>" name="email"><br>
-            Phone : <input type="text" value="<%=m.getPhone() %>" name="phone"><br>
-		            주소 : <input type="text" value="<%=m.getAddress() %>" name="addr"><br>
+            ID : <input type="text" value="${member.userId}" readonly name="userId" id="userId"/><br>
+            PW : <input type="password" value="${member.userPwd}" name="userPwd"/><br>
+            PW(re): <input type="password" value="${member.userPwd}" name="userPwd_re"/><br>
+            Name : <input type="text" value="${member.userName}" name="userName"><br>
+            Age : <input type="text" value="${member.age}" readonly name="age"><br>
+            Email : <input type="email" value="${member.email}" name="email"><br>
+            Phone : <input type="text" value="${member.phone}" name="phone"><br>
+		            주소 : <input type="text" value="${member.address}" name="addr"><br>
 		            Gender :    <input type="radio" name="gender" readonly value="M" id="M">남
 		                        <input type="radio" name="gender" readonly value="F" id="F">여 <br>
-		            취미 : <input type="text" value="<%=m.getHobby() %>" name="hobby"><br>
+		            취미 : <input type="text" value="${member.hobby}" name="hobby"><br>
             <input type="submit" value="수정하기"/>
             <button type="button" onclick="back();">취소</button>
         </form>
